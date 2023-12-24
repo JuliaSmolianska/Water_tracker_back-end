@@ -293,7 +293,7 @@
         }
       }
     },
-    "/waterToday": {
+    "/water/today": {
       "post": {
         "tags": ["WaterToday"],
         "summary": "Save water consumption information",
@@ -348,7 +348,7 @@
         }
       }
     },
-    "/waterToday/{recordId}": {
+    "/water/today/{recordId}": {
       "patch": {
         "tags": ["WaterToday"],
         "summary": "Edit water consumption record",
@@ -423,7 +423,7 @@
         }
       }
     },
-    "/waterMonth": {
+    "/water/month": {
       "get": {
         "tags": ["WaterMonth"],
         "summary": "Get water consumption information for each day in the selected month",
@@ -433,23 +433,26 @@
             "name": "month",
             "in": "query",
             "required": true,
-            "description": "Selected month (1-12)",
+            "description": "Selected month",
             "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 12
-            }
-          },
-          {
-            "name": "year",
-            "in": "query",
-            "required": true,
-            "description": "Year",
-            "schema": {
-              "type": "integer"
+              "type": "string",
+              "enum": [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December"
+              ]
             }
           }
-        ],
+                ],
         "responses": {
           "200": {
             "description": "Successful retrieval of water consumption information",
@@ -672,11 +675,35 @@
           },
           "time": {
             "type": "string",
-            "format": "date-time",
             "description": "Time when water was consumed"
+          },
+          "date": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "month": {
+            "type": "string",
+            "enum": [
+              "January",
+              "February",
+              "March",
+              "April",
+              "May",
+              "June",
+              "July",
+              "August",
+              "September",
+              "October",
+              "November",
+              "December"
+            ]
+          },
+          "percent": {
+            "type": "number"
           }
         },
-        "required": ["userId", "amount", "time"]
+        "required": ["userId", "amount", "time", "date", "month", "percent"]
       },
       "WaterTodayUpdateRequest": {
         "type": "object",
@@ -689,7 +716,6 @@
           },
           "time": {
             "type": "string",
-            "format": "date-time",
             "description": "Updated time when water was consumed"
           }
         }
@@ -701,18 +727,44 @@
             "type": "string",
             "description": "ID of the water consumption record"
           },
-          "userId": {
+          "owner": {
             "type": "string",
             "description": "User's ID"
           },
           "amount": {
             "type": "number",
-            "description": "Amount of water consumed in milliliters"
+            "description": "Amount of water consumed in milliliters",
+            "minimum": 0,
+            "maximum": 5000
           },
           "time": {
             "type": "string",
-            "format": "date-time",
             "description": "Time when water was consumed"
+          },
+          "date": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "month": {
+            "type": "string",
+            "enum": [
+              "January",
+              "February",
+              "March",
+              "April",
+              "May",
+              "June",
+              "July",
+              "August",
+              "September",
+              "October",
+              "November",
+              "December"
+            ]
+          },
+          "percent": {
+            "type": "number"
           }
         }
       },
