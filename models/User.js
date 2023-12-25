@@ -32,7 +32,7 @@ const userSchema = new Schema({
     enum: ["man", "woman"],
     default: "man"
   },
-  dailyWaterGoal: {
+  waterRate: {
     type: Number,
     default: 0
   },
@@ -45,8 +45,7 @@ const userSchema = new Schema({
   },
   verificationToken: {
     type: String,
-
-  },
+  }
 
 },
   { versionKey: false, timestamps: true }
@@ -59,25 +58,26 @@ userSchema.post("findOneAndUpdate", handleSaveError);
 export const User = model("user", userSchema);
 
 export const userRegisterSchema = Joi.object({
-  name: Joi.string().min(1).max(50).required().messages({ "any.required": `"username" is a required field` }),
-  password: Joi.string().min(8).required().messages({ "any.required": `"password" is a required field` }),
+  name: Joi.string().min(1).max(32).required().messages({ "any.required": `"username" is a required field` }),
   email: Joi.string().pattern(emailPattern).required().messages({ "any.required": `"email" is a required field` }),
+  password: Joi.string().min(8).max(64).required().messages({ "any.required": `"password" is a required field` }),
+  gender: Joi.string().valid("man", "woman").default("man"),
+  waterRate: Joi.number().default(0)
 })
 
 export const userLoginSchema = Joi.object({
-  password: Joi.string().min(8).required().messages({ "any.required": `"password" is a required field` }),
   email: Joi.string().pattern(emailPattern).required().messages({ "any.required": `"email" is a required field` }),
+  password: Joi.string().min(8).max(64).required().messages({ "any.required": `"password" is a required field` }),
 })
 
-/*
-export const userUpdateSubcsriptionSchema = Joi.object({
-  subscription: Joi.string()
-    .valid('starter', 'pro', 'business')
-    .required()
-    .messages({ "any.required": `"subscription" is a required field` }),
-    
-*/
+export const userUpdateSchema = Joi.object({
+  name: Joi.string().min(1).max(32).messages({ "any.required": `"username" is a required field` }),
+  email: Joi.string().pattern(emailPattern).messages({ "any.required": `"email" is a required field` }),
+  gender: Joi.string().valid("man", "woman").default("man"),
+  waterRate: Joi.number().min(1).max(15000),
+})
 
-export const userEmailSchema = Joi.object({
-  email: Joi.string().pattern(emailPattern).required().messages({ "any.required": "missing required field email" }),
+export const userNormWaterSchema = Joi.object({
+  waterRate: Joi.number().min(1).max(15000).required().messages({ "any.required": "missing required field dailyWaterNorm" }),
+  gender: Joi.string().valid("man", "woman"),
 })

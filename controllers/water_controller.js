@@ -4,23 +4,21 @@ import { Water } from "../models/Water.js";
 
 const getAllWaterToday = async (req, res) => {
   const { _id: owner, month, date } = req.user;
-  const allWaterList = await Water.find({ owner }, { month }, { date }, "-createdAt -updatedAt");
+  const allWaterList = await Water.find({ owner, month, date }, "-createdAt -updatedAt");
   res.json(allWaterList);
 }
 
 const getAllWaterMonth = async (req, res) => {
   const { _id: owner, month } = req.user;
-  const allWaterList = await Water.find({ owner }, { month }, "-createdAt -updatedAt");
+  const allWaterList = await Water.find({ owner, month }, "-createdAt -updatedAt");
   res.json(allWaterList);
 }
 
 const addWaterIntake = async (req, res) => {
   const { _id: owner } = req.user;
-  const currentDate = new Date();
-  const date = currentDate.getDate();
-  const month = currentDate.toLocaleString('default', { month: 'long' });
-  const newWaterIntake = await Water.create({ ...req.body, owner, date, month });
-  res.status(201).json(newWaterIntake);
+  const { date, month } = req.body;
+  await Water.create({ ...req.body, owner, date, month });
+  res.status(201).json({ message: "Water consumption record saved successfully" });
 }
 
 const updateWaterRecordId = async (req, res) => {
@@ -30,7 +28,8 @@ const updateWaterRecordId = async (req, res) => {
   if (!updateWaterRecord) {
     throw HttpError(404, `Water record with id=${recordId} not found`);
   }
-  res.json(updateWaterRecord);
+  const { waterVolume, time, date, month, percent } = updateWaterRecord
+  res.json({ waterVolume, time, date, month, percent });
 }
 
 const deleteWaterRecordId = async (req, res) => {
@@ -40,7 +39,7 @@ const deleteWaterRecordId = async (req, res) => {
   if (!removeWaterRecord) {
     throw HttpError(404, `Water record with id=${recordId} not found`);
   }
-  res.json({ message: "Deleted success" });
+  res.json({ message: "Water consumption record deleted successfully" });
 }
 
 

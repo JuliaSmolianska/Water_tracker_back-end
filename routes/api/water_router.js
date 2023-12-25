@@ -16,8 +16,8 @@ waterRouter.get('/month', waterController.getAllWaterMonth);
 
 waterRouter.post('/today', isEmptyBody, validateBody(addWaterSchema), waterController.addWaterIntake);
 
-waterRouter.patch('/today/:contactId', isValidId, isEmptyBody, validateBody(updateWaterSchema), waterController.updateWaterRecordId);
+waterRouter.patch('/today/:recordId', isValidId, isEmptyBody, validateBody(updateWaterSchema), waterController.updateWaterRecordId);
 
-waterRouter.delete('/today/:contactId', isValidId, waterController.deleteWaterRecordId)
+waterRouter.delete('/today/:recordId', isValidId, waterController.deleteWaterRecordId)
 
 export default waterRouter;

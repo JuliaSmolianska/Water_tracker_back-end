@@ -240,7 +240,7 @@
         }
       }
     },
-    "/user/{userId}/waterNorm": {
+    "/user/waterNorm": {
       "patch": {
         "tags": ["User"],
         "summary": "Update user's daily water norm goal",
@@ -329,14 +329,37 @@
       "get": {
         "tags": ["WaterToday"],
         "summary": "Get water consumption information for today",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 31
+            }
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
+
         "responses": {
           "200": {
             "description": "Successful retrieval of water consumption information for today",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AllWaterTodayResponse"
+                  "$ref": "#/components/schemas/WaterTodayResponse"
                 }
               }
             }
@@ -433,26 +456,14 @@
             "name": "month",
             "in": "query",
             "required": true,
-            "description": "Selected month",
+            "description": "Selected month from 1 to 12",
             "schema": {
-              "type": "string",
-              "enum": [
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December"
-              ]
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
             }
           }
-                ],
+        ],
         "responses": {
           "200": {
             "description": "Successful retrieval of water consumption information",
@@ -554,8 +565,24 @@
           "token": {
             "type": "string",
             "description": "JWT token for authentication"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "User's email address"
+              }
+            },
+            "required": ["name", "email"]
           }
-        }
+        },
+        "required": ["token", "user"]
       },
 
       "securitySchemes": {
@@ -568,17 +595,13 @@
       "AvatarResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string",
-            "description": "Message indicating the success of the operation"
-          },
           "avatarUrl": {
             "type": "string",
             "description": "URL to the user's avatar"
           }
         }
       },
-      "UserUpdateRequest": {
+      "UserInfoRequest": {
         "type": "object",
         "properties": {
           "name": {
@@ -601,7 +624,7 @@
             "description": "Updated user's gender",
             "enum": ["man", "woman"]
           },
-          "dailyWaterGoal": {
+          "waterRate": {
             "type": "number",
             "description": "Updated user's daily water consumption goal",
             "minimum": 0,
@@ -613,10 +636,6 @@
       "UserInfoResponse": {
         "type": "object",
         "properties": {
-          "userId": {
-            "type": "string",
-            "description": "User's ID"
-          },
           "name": {
             "type": "string",
             "description": "User's name"
@@ -635,7 +654,7 @@
             "description": "Updated user's gender",
             "enum": ["man", "woman"]
           },
-          "dailyWaterGoal": {
+          "waterRate": {
             "type": "number",
             "description": "Updated user's daily water consumption goal",
             "minimum": 0,
@@ -647,7 +666,7 @@
       "WaterNormUpdateRequest": {
         "type": "object",
         "properties": {
-          "dailyWaterGoal": {
+          "waterRate": {
             "type": "number",
             "description": "Updated daily water consumption goal for the user",
             "minimum": 0,
@@ -663,11 +682,7 @@
       "WaterTodaySaveRequest": {
         "type": "object",
         "properties": {
-          "owner": {
-            "type": "string",
-            "description": "User's ID"
-          },
-          "amount": {
+          "waterVolume": {
             "type": "number",
             "description": "Amount of water consumed in milliliters",
             "minimum": 0,
@@ -678,37 +693,32 @@
             "description": "Time when water was consumed"
           },
           "date": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1,
             "maximum": 31
           },
           "month": {
-            "type": "string",
-            "enum": [
-              "January",
-              "February",
-              "March",
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December"
-            ]
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
           },
           "percent": {
             "type": "number"
           }
         },
-        "required": ["userId", "amount", "time", "date", "month", "percent"]
+        "required": [
+          "userId",
+          "waterVolume",
+          "time",
+          "date",
+          "month",
+          "percent"
+        ]
       },
       "WaterTodayUpdateRequest": {
         "type": "object",
         "properties": {
-          "amount": {
+          "waterVolume": {
             "type": "number",
             "description": "Updated amount of water consumed in milliliters",
             "minimum": 0,
@@ -723,15 +733,7 @@
       "WaterTodayResponse": {
         "type": "object",
         "properties": {
-          "recordId": {
-            "type": "string",
-            "description": "ID of the water consumption record"
-          },
-          "owner": {
-            "type": "string",
-            "description": "User's ID"
-          },
-          "amount": {
+          "waterVolume": {
             "type": "number",
             "description": "Amount of water consumed in milliliters",
             "minimum": 0,
@@ -742,26 +744,14 @@
             "description": "Time when water was consumed"
           },
           "date": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1,
             "maximum": 31
           },
           "month": {
-            "type": "string",
-            "enum": [
-              "January",
-              "February",
-              "March",
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December"
-            ]
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
           },
           "percent": {
             "type": "number"
@@ -774,41 +764,34 @@
           "type": "object",
           "properties": {
             "date": {
-              "type": "string",
-              "description": "Date in the format 'day, month'",
-              "example": "April"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 31
             },
-            "dailyNorm": {
+            "month": {
+              "type": "integer",
+              "description": "Date in the format 'day of month'",
+              "example": "10"
+            },
+            "waterVolume": {
               "type": "number",
-              "description": "Daily norm of water consumption in liters",
+              "description": "Daily norm of water intake in ml",
               "example": 1.8
             },
-            "percentageConsumed": {
+            "percent": {
               "type": "number",
               "description": "Percentage of water consumed from the daily norm",
               "example": 60
             },
-            "numOfConsumptions": {
+            "numOfWaterRecords": {
               "type": "integer",
-              "description": "Number of water consumption records for the day",
+              "description": "Number of water intake records for the day",
               "example": 6
             }
           }
         }
-      },
-      "AllWaterTodayResponse": {
-        "type": "object",
-        "properties": {
-          "totalConsumed": {
-            "type": "number",
-            "description": "Total amount of water consumed today in milliliters"
-          },
-          "numOfConsumptions": {
-            "type": "integer",
-            "description": "Number of water consumption records for today"
-          }
-        }
       }
+     
     }
   }
 }
