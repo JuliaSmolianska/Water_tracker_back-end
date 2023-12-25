@@ -16,9 +16,9 @@ const waterSchema = new Schema({
     max: 31
   },
   month: {
-    type: Number,
-    min: 1,
-    max: 12
+    type: String,
+    enum: ["January", "February", "March", "April", "May", "June", "July", "August",
+      "September", "October", "November", "December"]
   },
   percent: {
     type: Number
@@ -41,7 +41,8 @@ export const addWaterSchema = Joi.object({
   waterVolume: Joi.number().min(1).max(5000).required().messages({ "any.required": "missing required amount field" }),
   time: Joi.string().required().messages({ "any.required": "missing required time field" }),
   date: Joi.number().min(1).max(31).required().messages({ "any.required": "missing required date field" }),
-  month: Joi.number().min(1).max(12).required().messages({ "any.required": "missing required month field" }),
+  month: Joi.string().valid("January", "February", "March", "April", "May", "June", "July", "August",
+    "September", "October", "November", "December").required().messages({ "any.required": "missing required month field" }),
   percent: Joi.number().required().messages({ "any.required": "missing required percent field" }),
 })
 
