@@ -3,21 +3,24 @@ import { ctrlWrapper } from "../decorator/ctrlWrapper.js";
 import { Water } from "../models/Water.js";
 
 const getAllWaterToday = async (req, res) => {
-  const { _id: owner, month, date } = req.user;
-  const allWaterList = await Water.find({ owner, month, date }, "-createdAt -updatedAt");
+  const { _id: owner } = req.user;
+  const { date, month } = req.body;
+  const allWaterList = await Water.find({ owner, date, month }, "-createdAt -updatedAt");
   res.json(allWaterList);
 }
 
 const getAllWaterMonth = async (req, res) => {
-  const { _id: owner, month } = req.user;
+  const { _id: owner } = req.user;
+  const { month } = req.body;
   const allWaterList = await Water.find({ owner, month }, "-createdAt -updatedAt");
   res.json(allWaterList);
 }
 
 const addWaterIntake = async (req, res) => {
-  const { _id: owner } = req.user;
-  const { date, month } = req.body;
-  await Water.create({ ...req.body, owner, date, month });
+  const { _id: owner, waterRate } = req.user;
+  const { waterVolume, date, month } = req.body;
+  const percent = (waterVolume * 100 / waterRate).toFixed(2);
+  await Water.create({ ...req.body, owner, date, month, percent });
   res.status(201).json({ message: "Water consumption record saved successfully" });
 }
 

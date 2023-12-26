@@ -43,7 +43,7 @@ export const addWaterSchema = Joi.object({
   date: Joi.number().min(1).max(31).required().messages({ "any.required": "missing required date field" }),
   month: Joi.string().valid("January", "February", "March", "April", "May", "June", "July", "August",
     "September", "October", "November", "December").required().messages({ "any.required": "missing required month field" }),
-  percent: Joi.number().required().messages({ "any.required": "missing required percent field" }),
+  percent: Joi.number().messages({ "any.required": "missing required percent field" }),
 })
 
 export const updateWaterSchema = Joi.object({
