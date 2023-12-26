@@ -5,21 +5,44 @@ import { Water } from "../models/Water.js";
 const getAllWaterToday = async (req, res) => {
   const { _id: owner } = req.user;
   const { date, month } = req.body;
-  const allWaterList = await Water.find({ owner, date, month }, "-createdAt -updatedAt");
+  const allWaterList = await Water.find({ owner, date, month }, "-createdAt -updatedAt -owner -_id");
   res.json(allWaterList);
 }
 
 const getAllWaterMonth = async (req, res) => {
   const { _id: owner } = req.user;
   const { month } = req.body;
-  const allWaterList = await Water.find({ owner, month }, "-createdAt -updatedAt");
-  res.json(allWaterList);
+  const aggregatedResult = await Water.aggregate([
+    {
+      $match: { owner, month }
+    },
+    {
+      $group: {
+        _id: { date: "$date", month: "$month" },
+        waterVolume: { $sum: "$waterVolume" },
+        percent: { $sum: "$percent" },
+        numOfWaterRecords: { $sum: 1 }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        date: "$_id.date",
+        month: "$_id.month",
+        waterVolume: 1,
+        percent: { $round: ["$percent"] },
+        numOfWaterRecords: 1
+      }
+    }
+  ]);
+
+  res.json(aggregatedResult);
 }
 
 const addWaterIntake = async (req, res) => {
   const { _id: owner, waterRate } = req.user;
   const { waterVolume, date, month } = req.body;
-  const percent = (waterVolume * 100 / waterRate).toFixed(2);
+  const percent = (waterVolume * 100 / waterRate);
   await Water.create({ ...req.body, owner, date, month, percent });
   res.status(201).json({ message: "Water consumption record saved successfully" });
 }
