@@ -11,7 +11,7 @@
   },
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json"],
-  "servers": [{ "url": "http://localhost:8000/" }],
+  "servers": [{ "url": "https://water-tracker-3v20.onrender.com" }],
   "tags": [
     {
       "name": "Users Auth",
@@ -246,7 +246,7 @@
         }
       }
     },
-       "/users/forgot-password": {
+    "/users/forgot-password": {
       "post": {
         "tags": ["Users"],
         "summary": "Send forgot password email",
@@ -660,7 +660,7 @@
                 "example": "6566f0735775c3f350f806d3"
               },
 
-             "waterRate": {
+              "waterRate": {
                 "type": "number",
                 "description": "User's daily water consumption goal"
               }
