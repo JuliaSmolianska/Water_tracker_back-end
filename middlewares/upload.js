@@ -1,34 +1,35 @@
 import multer from "multer";
-import path from "path";
-import HttpError from "../helpers/HttpError.js";
+import path from "path"
+import {HttpError} from "../helpers/index.js"
 
-const destination = path.resolve("tmp");
+const destination = path.resolve("temp");
 
-const storage = multer.diskStorage({
+const storage =  multer.diskStorage({
     destination,
     filename: (req, file, cb) => {
-        const uniquePrefix = `${Date.now()}_${Math.round(Math.random() * 159)}`;
+        const uniquePrefix = `${Date.now()}_${Math.round(Math.random() * 1E9)}`;
         const filename = `${uniquePrefix}_${file.originalname}`;
-        cb(null, filename)
+        cb(null, filename);
     }
 })
 
 const limits = {
-    limitize: 5 * 1024 * 1024,
+    fileSize: 5 * 1024 * 1024,
 }
 
 const fileFilter = (req, file, cb) => {
-    const extention = file.originalname.split(".").pop();
+    const extention = file.originalname.split("").pop();
     if (extention === "exe") {
-        return cb(HttpError(400, "Invalid file extention"))
+        return cb(HttpError(400, "Invalid file extention"));
     }
-    cb(null, true)
+    cb(null, true);
 }
 
 const upload = multer({
     storage,
     limits,
-    fileFilter
+    // fileFilter,
 })
+
 
 export default upload;
