@@ -93,7 +93,7 @@ const updateWaterNorm = async (req, res) => {
 const forgotPasswordEmail = (email, generatePassword) => ({
   to: email,
   subject: "You get a new password",
-  html: `<p>${generatePassword}</p><br/><a target="_blank" href="https://oleksiihvozdukhin.github.io/code-jedi-project-03-frontend/signin"><button>Go to Singin page</button></a>`
+  html: `<p>${generatePassword}</p><br/><a target="_blank" href="https://localhost:3000/singin"><button>Go to Singin page</button></a>`
 });
 
 const forgotPassword = async (req, res, next) => {
